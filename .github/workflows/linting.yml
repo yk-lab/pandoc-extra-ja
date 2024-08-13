@@ -33,7 +33,7 @@ jobs:
       - name: Run shellcheck
         uses: reviewdog/action-shellcheck@v1
         with:
-          github_token: ${{ secrets.github_token }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           path: "."
           pattern: "*.sh"
           exclude: "./.git/*"
@@ -46,7 +46,7 @@ jobs:
       - name: yamllint
         uses: reviewdog/action-yamllint@v1
         with:
-          github_token: ${{ secrets.github_token }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           fail_on_error: true
       - name: yamlfmt action
         uses: yk-lab/yamlfmt-action@v1.0.0-rc1
