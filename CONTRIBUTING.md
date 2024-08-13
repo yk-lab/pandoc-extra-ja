@@ -38,25 +38,30 @@
 
 ## コードスタイル
 
-- Dockerfile の変更には [hadolint](https://github.com/hadolint/hadolint) を使用して linting を行ってください。
+- Dockerfile の変更には [hadolint](https://github.com/hadolint/hadolint) を
+  使用して linting を行ってください。
 
   ```bash
   hadolint Dockerfile
   ```
 
-- Markdown ファイルの変更には [markdownlint](https://github.com/DavidAnson/markdownlint) を使用して linting を行ってください。
+- Markdown ファイルの変更には [markdownlint](https://github.com/DavidAnson/markdownlint) を
+  使用して linting を行ってください。
 
   ```bash
   markdownlint-cli2 "**/*.md"
   ```
 
-- Shell スクリプトの変更には [shellcheck](https://github.com/koalaman/shellcheck) を使用して linting を行ってください。
+- Shell スクリプトの変更には [shellcheck](https://github.com/koalaman/shellcheck) を
+  使用して linting を行ってください。
 
   ```bash
   shellcheck "**/*.sh"
   ```
 
-- YAML ファイルの変更には [yamllint](https://github.com/adrienverge/yamllint) を使用して linting を、[yamlfmt](https://github.com/google/yamlfmt) を使用してフォーマットを行ってください。
+- YAML ファイルの変更には
+  [yamllint](https://github.com/adrienverge/yamllint) を使用して linting を、
+  [yamlfmt](https://github.com/google/yamlfmt) を使用してフォーマットを行ってください。
 
   ```bash
   yamllint .
@@ -80,7 +85,9 @@
 
 ## その他
 
-- **バグレポート**: バグを見つけた場合は、[Issues](https://github.com/yk-lab/pandoc-extra-ja/issues) に報告してください。
-- **質問**: 質問がある場合は、[Discussions](https://github.com/yk-lab/pandoc-extra-ja/discussions) を利用してください。
+- **バグレポート**:
+  バグを見つけた場合は、[Issues](https://github.com/yk-lab/pandoc-extra-ja/issues) に報告してください。
+- **質問**:
+  質問がある場合は、[Discussions](https://github.com/yk-lab/pandoc-extra-ja/discussions) を利用してください。
 
 貢献していただきありがとうございます！
