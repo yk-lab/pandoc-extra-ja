@@ -1,5 +1,6 @@
 {
     "recommendations": [
-        "bluebrown.yamlfmt"
+        "bluebrown.yamlfmt",
+        "davidanson.vscode-markdownlint"
     ]
 }
