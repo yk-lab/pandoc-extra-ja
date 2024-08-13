@@ -1,0 +1,66 @@
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - main
+
+jobs:
+  lint_docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run hadolint
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+
+  lint_markdown:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run markdownlint
+        uses: reviewdog/action-markdownlint@v0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          filter_mode: nofilter
+          fail_on_error: true
+
+  lint_shell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run shellcheck
+        uses: reviewdog/action-shellcheck@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          path: "."
+          pattern: "*.sh"
+          exclude: "./.git/*"
+          check_all_files_with_shebangs: "false"
+
+  lint_yaml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: yamllint
+        uses: reviewdog/action-yamllint@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_error: true
+      - name: yamlfmt action
+        uses: yk-lab/yamlfmt-action@v1.0.0-rc1
+        with:
+          path: .
+          exclude: ./.git
+          extensions: .yaml,.yml,.yamlfmt,.yamllint
+
+  spellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run codespell
+        uses: codespell-project/actions-codespell@master
+        with:
+          check_filenames: true
+          skip: ./.git
