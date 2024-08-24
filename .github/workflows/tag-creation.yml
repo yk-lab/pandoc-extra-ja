@@ -1,0 +1,164 @@
+name: Tag Creation
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Enter the version to tag (e.g., v2024.0.0)'
+        required: true
+
+env:
+  TEST_TAG: pandoc-extra-ja:test
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run linting (hadolint)
+        uses: ./.github/actions/docker-lint
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Docker Build
+        uses: ./.github/workflows/docker-build.yml
+        with:
+          tag: ${{ env.TEST_TAG }}
+
+  trivy-scan:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run Trivy Security Scan
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: ${{ env.TEST_TAG }}
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Run Trivy Security Scan
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: ${{ env.TEST_TAG }}
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: 1
+          vuln-type: 'os,library'
+          format: 'table'
+
+  dockle-scan:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run Dockle Security Scan
+        uses: erzz/dockle-action@v1
+        with:
+          image: ${{ env.TEST_TAG }}
+          exit-code: 1
+          failure-threshold: fatal
+
+      - name: Upload Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Dockle Report
+          path: dockle-report.json
+
+  cancel-tag-push:
+    needs: [trivy-scan, dockle-scan]
+    if: failure()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Obtain Repository Name
+        id: repository
+        run: echo "name=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_OUTPUT
+
+      - name: Notify Failure
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_COLOR: danger
+          SLACK_TITLE: ":rotating_light: [${{ steps.repository.outputs.name }}] Security check failed"
+          SLACK_MESSAGE: ":closed_book: The tag ${{ github.ref_name }} cannot be pushed."
+
+  create-draft-release:
+    needs: [trivy-scan, dockle-scan]
+    if: success()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'latest'
+
+      - name: Install auto-changelog
+        run: npm install -g auto-changelog
+
+      - name: Update CHANGELOG.md
+        run: |
+          auto-changelog --output CHANGELOG.md --tag ${{ github.event.inputs.version }}
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add CHANGELOG.md
+          git commit -m "chore: update CHANGELOG for ${{ github.event.inputs.version }}"
+          git push
+
+      - name: Create Git Tag
+        run: |
+          git tag ${{ github.event.inputs.version }}
+          git push origin ${{ github.event.inputs.version }}
+
+      - name: Create Release Draft
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ github.event.inputs.version }}
+          release_name: "Release ${{ github.event.inputs.version }}"
+          draft: true
+          body: |
+            This is a draft release for version ${{ github.event.inputs.version }}.
+
+      - name: Read CHANGELOG.md
+        id: read-changelog
+        run: |
+          changelog_content=$(awk '/^## \[\[${{ github.event.inputs.version }}\]/,/^## \[\[/' CHANGELOG.md)
+          echo "::set-output name=changelog::${changelog_content}"
+
+      - name: Create Release Draft
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ github.event.inputs.version }}
+          release_name: "Release ${{ github.event.inputs.version }}"
+          draft: true
+          body: ${{ steps.read-changelog.outputs.changelog }}
+
+      - name: Obtain Repository Name
+        id: repository
+        run: echo "name=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_OUTPUT
+
+      - name: Notify Success
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_COLOR: warning
+          SLACK_TITLE: ":tada: [${{ steps.repository.outputs.name }}] Security check passed"
+          SLACK_MESSAGE: |
+            :rocket: The tag ${{ github.event.inputs.version }} has been pushed.
+            A draft release has been created.
+            Please review and publish it.
