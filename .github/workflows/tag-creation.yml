@@ -138,7 +138,7 @@ jobs:
         id: read-changelog
         run: |
           changelog_content=$(awk '/^## \[\[${{ github.event.inputs.version }}\]/,/^## \[\[/' CHANGELOG.md)
-          echo "::set-output name=changelog::${changelog_content}"
+          echo "changelog=${changelog_content}" >> $GITHUB_OUTPUT
 
       - name: Create Release Draft
         uses: actions/create-release@v1

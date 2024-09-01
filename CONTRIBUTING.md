@@ -80,11 +80,14 @@
 - Eisvogel の examples を取得します。
 
     ```bash
+    REPOSITORY="Wandmalfarbe/pandoc-latex-template"
+    RELEASE_URL="https://api.github.com/repos/${REPOSITORY}/releases/latest"
+
     # Wandmalfarbe/pandoc-latex-template の最新のリリースを取得
-    LATEST_RELEASE=$(curl -s https://api.github.com/repos/Wandmalfarbe/pandoc-latex-template/releases/latest | grep "tag_name" | cut -d\" -f4)
+    LATEST_RELEASE=$(curl -s ${RELEASE_URL} | grep "tag_name" | cut -d\" -f4)
 
     # ダウンロードURL
-    DOWNLOAD_URL="https://github.com/Wandmalfarbe/pandoc-latex-template/releases/download/${LATEST_RELEASE}/Eisvogel.tar.gz"
+    DOWNLOAD_URL="https://github.com/${REPOSITORY}/releases/download/${LATEST_RELEASE}/Eisvogel.tar.gz"
 
     # ダウンロードして解凍
     curl -L -s $DOWNLOAD_URL | tar zxvf - examples
@@ -98,7 +101,16 @@
 
     ```bash
     docker build -t pandoc-extra-ja .
-    docker run --rm -v $(PWD)/examples/language-japanese:/data -it pandoc-extra-ja document.md -o document.pdf --template /.pandoc/templates/eisvogel.latex --listings --pdf-engine "xelatex" -V mainfont="Noto Serif" -V sansfont="Noto Sans" -V monofont="Noto Sans Mono CJK JP" -V mathfont="Noto Serif" -V CJKmainfont="Noto Serif CJK JP"
+    docker run --rm -v $(PWD)/examples/language-japanese:/data \
+    -it pandoc-extra-ja document.md \
+    -o document.pdf \
+    --template /.pandoc/templates/eisvogel.latex \
+    --listings --pdf-engine "xelatex" \
+    -V mainfont="Noto Serif" \
+    -V sansfont="Noto Sans" \
+    -V monofont="Noto Sans Mono CJK JP" \
+    -V mathfont="Noto Serif" \
+    -V CJKmainfont="Noto Serif CJK JP"
     ```
 
 ## その他

@@ -4,11 +4,12 @@ FROM pandoc/extra:${PANDOC_VERSION}
 
 # Install additional packages
 # font-noto: for Noto fonts
-RUN apk update \
+RUN set -e \
+    && apk update \
     && apk add --no-cache \
-        fontconfig \
-        font-noto \
-        font-noto-cjk \
+        fontconfig=2.14.2 \
+        font-noto=24.9.1 \
+        font-noto-cjk=24.9.1 \
     && fc-cache -f \
     && rm -rf /var/cache/apk/*
 
@@ -20,7 +21,8 @@ RUN apk update \
 # collection-langjapanese: for Japanese language support
 # collection-fontsrecommended: for recommended fonts
 # collection-⁠fontsextra: for additional fonts
-RUN tlmgr update --self --all \
+RUN set -e \
+    && tlmgr update --self --all \
     && tlmgr install \
         texlive-ja \
         jvlisting \
