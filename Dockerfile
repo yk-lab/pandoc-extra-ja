@@ -1,17 +1,8 @@
-ARG PANDOC_VERSION=latest
+# syntax=docker/dockerfile:1
 
+ARG PANDOC_VERSION=latest-ubuntu
+# FROM --platform=$BUILDPLATFORM pandoc/extra:${PANDOC_VERSION}
 FROM pandoc/extra:${PANDOC_VERSION}
-
-# Install additional packages
-# font-noto: for Noto fonts
-RUN set -e \
-    && apk update \
-    && apk add --no-cache \
-        fontconfig=2.14.2 \
-        font-noto=24.9.1 \
-        font-noto-cjk=24.9.1 \
-    && fc-cache -f \
-    && rm -rf /var/cache/apk/*
 
 # Install additional TeX packages for japanese support using tlmgr
 # texlive-ja: for Japanese support
@@ -32,3 +23,15 @@ RUN set -e \
         collection-fontsrecommended \
         collection-fontsextra \
     && tlmgr backup --clean --all
+
+# Install additional packages
+RUN set -e \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        fontconfig \
+        fonts-noto \
+        fonts-noto-cjk \
+        fonts-noto-cjk-extra \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && fc-cache -f

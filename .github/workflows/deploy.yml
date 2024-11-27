@@ -1,0 +1,63 @@
+name: 
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+            ${{ vars.DOCKERHUB_REPOSITORY_NAME }}
+          # generate Docker tags based on the following events/attributes
+          tags: |
+            type=semver,pattern={{version}}
+            type=sha,prefix=sha-,format=long
+            type=schedule,pattern={{date 'YYYYMMDD-hhmmss'}}
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+                  
+      - name: Build and export to Docker
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          sbom: true
+          push: true
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          tags: ${{ steps.meta.outputs.tags }}
+          annotations: ${{ steps.meta.outputs.annotations }}
+
+      - name: Update repo description
+        uses: peter-evans/dockerhub-description@e98e4d1628a5f3be2be7c231e50981aee98723ae # v4.0.0
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: ${{ vars.DOCKERHUB_REPOSITORY_NAME }}
+
+      - name: Obtain Repository Name
+        id: repository
+        run: echo "name=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_OUTPUT
+
+      - name: Notify Success
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_COLOR: warning
+          SLACK_TITLE: ":tada: [${{ steps.repository.outputs.name }}] Release ${{ steps.meta.outputs.tags }}"
+          SLACK_MESSAGE: |
+            :rocket: The tag ${{ steps.meta.outputs.tags }} has been pushed.
