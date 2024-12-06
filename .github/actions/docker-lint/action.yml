@@ -1,7 +1,6 @@
 name: Docker Linting
 
 runs:
-  # compositeが必須
   using: 'composite'
   steps:
     - uses: Kesin11/actions-timeline@v1
