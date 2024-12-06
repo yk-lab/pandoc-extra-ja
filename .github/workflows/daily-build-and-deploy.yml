@@ -2,23 +2,23 @@ name: Daily Build and Push
 
 on:
   schedule:
-    - cron: '0 14 * * *'  # 毎日UTCの14時に実行
+    - cron: '0 14 * * *' # 毎日UTCの14時に実行
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     strategy:
-        fail-fast: false
-        matrix:
-          include:
-            - tag: "0.0.1"
-              aliases:  |
-                latest
-                0
-                0.0
-            - tag: "main"
-              aliases:  |
-                edge
+      fail-fast: false
+      matrix:
+        include:
+          - tag: "0.0.1"
+            aliases: |
+              latest
+              0
+              0.0
+          - tag: "main"
+            aliases: |
+              edge
     steps:
       - uses: actions/checkout@v4
         with:

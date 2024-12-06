@@ -28,10 +28,10 @@ RUN set -e \
 RUN set -e \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
-        fontconfig \
-        fonts-noto \
-        fonts-noto-cjk \
-        fonts-noto-cjk-extra \
+        fontconfig=2.15.0-1.1ubuntu2 \
+        fonts-noto=20201225-2 \
+        fonts-noto-cjk=1:20230817+repack1-3 \
+        fonts-noto-cjk-extra=1:20230817+repack1-3 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && fc-cache -f

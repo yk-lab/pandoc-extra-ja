@@ -2,5 +2,11 @@
     "editor.formatOnSave": true,
     "[dockerfile]": {
         "editor.defaultFormatter": "exiasr.hadolint"
+    },
+    "[yaml]": {
+        "editor.defaultFormatter": "bluebrown.yamlfmt"
+    },
+    "[github-actions-workflow]": {
+        "editor.defaultFormatter": "bluebrown.yamlfmt"
     }
 }
