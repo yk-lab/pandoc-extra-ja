@@ -1,4 +1,5 @@
 name: Docker Linting
+description: Lint Dockerfiles with hadolint
 
 runs:
   using: 'composite'

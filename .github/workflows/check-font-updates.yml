@@ -21,7 +21,7 @@ jobs:
         shell: bash
         run: |
           # 更新があるパッケージを保存するための一時ファイル
-          TEMP_FILE="$(mktemp)"
+          TEMP_FILE="$(mktemp)" || exit 1
           trap 'rm -f "$TEMP_FILE"' EXIT
           : > "$TEMP_FILE"  # 中身をクリア
 
@@ -29,14 +29,12 @@ jobs:
           PACKAGES='fontconfig fonts-noto fonts-noto-cjk fonts-noto-cjk-extra'
           IFS=' ' read -r -a ARRAY <<< "$PACKAGES"
           for pkg in "${ARRAY[@]}"; do
-            CURRENT_VERSION=$(apt-cache policy "$pkg" | grep 'Installed:' | awk '{print $2}')
-            if [ $? -ne 0 ]; then
+            if ! CURRENT_VERSION=$(apt-cache policy "$pkg" | grep 'Installed:' | awk '{print $2}'); then
               echo "Error: Failed to get installed version for $pkg" >&2
               exit 1
             fi
 
-            CANDIDATE_VERSION=$(apt-cache policy "$pkg" | grep 'Candidate:' | awk '{print $2}')
-            if [ $? -ne 0 ]; then
+            if ! CANDIDATE_VERSION=$(apt-cache policy "$pkg" | grep 'Candidate:' | awk '{print $2}'); then
               echo "Error: Failed to get candidate version for $pkg" >&2
               exit 1
             fi

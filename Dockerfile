@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 ARG PANDOC_VERSION=latest-ubuntu
-FROM --platform=$BUILDPLATFORM pandoc/extra:${PANDOC_VERSION}
+FROM pandoc/extra:${PANDOC_VERSION}
 
 # Install additional TeX packages for japanese support using tlmgr
 # texlive-ja: for Japanese support
@@ -31,6 +31,7 @@ RUN set -e \
         fonts-noto=20201225-2 \
         fonts-noto-cjk=1:20230817+repack1-3 \
         fonts-noto-cjk-extra=1:20230817+repack1-3 \
+    && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && fc-cache -f
