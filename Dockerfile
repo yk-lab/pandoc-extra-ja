@@ -1,8 +1,7 @@
 # syntax=docker/dockerfile:1
 
 ARG PANDOC_VERSION=latest-ubuntu
-# FROM --platform=$BUILDPLATFORM pandoc/extra:${PANDOC_VERSION}
-FROM pandoc/extra:${PANDOC_VERSION}
+FROM --platform=$BUILDPLATFORM pandoc/extra:${PANDOC_VERSION}
 
 # Install additional TeX packages for japanese support using tlmgr
 # texlive-ja: for Japanese support

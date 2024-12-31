@@ -37,13 +37,13 @@ making it suitable for creating documents in Japanese.
 ### Docker Hub から取得 (Pull from Docker Hub)
 
 ```bash
-docker pull yk-lab/pandoc-extra-ja
+docker pull yklab/pandoc-extra-ja
 ```
 
 ### ローカルでビルド (Build Locally)
 
 ```bash
-git clone git@github.com:yk-lab/pandoc-extra-ja.git
+git clone git@github.com:yklab/pandoc-extra-ja.git
 cd pandoc-extra-ja
 docker build -t pandoc-extra-ja .
 ```
@@ -55,7 +55,7 @@ Markdown ファイルから PDF を生成する例です:
 Here’s how you can use the image to generate a PDF from a Markdown file:
 
 ```bash
-docker run --rm -v $(pwd):/workspace -w /workspace yk-lab/pandoc-extra-ja \
+docker run --rm -v $(pwd):/workspace -w /workspace yklab/pandoc-extra-ja \
     pandoc input.md -o output.pdf
 ```
 
