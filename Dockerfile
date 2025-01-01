@@ -21,6 +21,7 @@ RUN set -e \
         collection-langjapanese \
         collection-fontsrecommended \
         collection-fontsextra \
+    && tlmgr update --all \
     && tlmgr backup --clean --all
 
 # Install additional packages
