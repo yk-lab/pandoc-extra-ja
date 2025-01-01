@@ -61,7 +61,43 @@ docker run --rm -v $(pwd):/workspace -w /workspace yklab/pandoc-extra-ja \
 
 ## GitHub Actions との統合 (GitHub Actions Integration)
 
-Coming soon!
+GitHub Actions を使用して、Markdown ファイルから PDF を自動生成するワークフローを設定する例です。
+
+```yaml: .github/workflows/build-pdf.yml
+name: Build PDF
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download eisvogel
+        run: |
+          wget -O eisvogel.tex https://github.com/Wandmalfarbe/pandoc-latex-template/raw/refs/heads/master/eisvogel.tex
+      - uses: yk-lab/pandoc-extra-ja@main
+        with:
+          input-file: "README.md"
+          output-file: "README.pdf"
+          pdf-engine: xelatex
+          template: eisvogel.tex
+          listings: true
+          cjk-mainfont: Noto Serif CJK JP
+          mainfont: Noto Serif
+          sansfont: Noto Sans
+          monofont: Noto Sans Mono CJK JP
+          mathfont: Noto Sans Math
+      - name: Upload PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: README
+          path: README.pdf
+```
 
 ## 貢献 (Contributing)
 

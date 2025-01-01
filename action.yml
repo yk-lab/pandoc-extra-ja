@@ -1,0 +1,68 @@
+name: 'Pandoc extra (ja) Action'
+description: 'A GitHub Action to convert Markdown to PDF using Pandoc with Japanese language support'
+author: 'k.yamada a.k.a. yk-lab'
+inputs:
+  pandoc-version:
+    required: false
+    description: 'The version of Pandoc to use'
+    default: 'latest'
+  input-file:
+    required: true
+    description: 'The path to the input file'
+    default: 'README.md'
+  output-file:
+    required: false
+    description: 'The path where to save the output file'
+  output:
+    required: false
+    description: 'The output command result'
+    default: "/dev/stdout"
+  pdf-engine:
+    required: false
+    description: 'The PDF engine to use'
+  template:
+    required: false
+    description: 'The template to use'
+  listings:
+    required: false
+    description: 'Whether to use the listings package'
+    default: false
+    type: boolean
+  cjk-mainfont:
+    required: false
+    description: 'The main font for CJK characters (e.g. Noto Serif CJK JP)'
+  mainfont:
+    required: false
+    description: 'The main font'
+  sansfont:
+    required: false
+    description: 'The sans font'
+  monofont:
+    required: false
+    description: 'The monospace font'
+  mathfont:
+    required: false
+    description: 'The math font'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  entrypoint: '/action.sh'
+  args:
+    - ${{ inputs.input-file }}
+  env:
+    PANDOC_VERSION: ${{ inputs.pandoc-version }}
+    PANDOC_OUTPUT: ${{ inputs.output }}
+    PANDOC_OUTPUT_FILE: ${{ inputs.output-file }}
+    PANDOC_PDF_ENGINE: ${{ inputs.pdf-engine }}
+    PANDOC_TEMPLATE: ${{ inputs.template }}
+    PANDOC_LISTINGS: ${{ inputs.listings }}
+    PANDOC_CJK_MAINFONT: ${{ inputs.cjk-mainfont }}
+    PANDOC_MAINFONT: ${{ inputs.mainfont }}
+    PANDOC_SANSFONT: ${{ inputs.sansfont }}
+    PANDOC_MONOFONT: ${{ inputs.monofont }}
+    PANDOC_MATHFONT: ${{ inputs.mathfont }}
+
+branding:
+  icon: 'file'
+  color: 'blue'

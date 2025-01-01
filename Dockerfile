@@ -35,3 +35,5 @@ RUN set -e \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && fc-cache -f
+
+COPY action.sh /action.sh
