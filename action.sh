@@ -15,6 +15,14 @@ if [ -n "${PANDOC_LISTINGS}" ] && [ "${PANDOC_LISTINGS}" = "true" ]; then
     # Use --listings to include listings
     COMMAND="${COMMAND} --listings"
 fi
+if [ -n "${PANDOC_HIGHLIGHT_STYLE}" ]; then
+    # Use --highlight-style to specify the highlight style
+    COMMAND="${COMMAND} --highlight-style \"${PANDOC_HIGHLIGHT_STYLE}\""
+fi
+if [ -n "${PANDOC_TOC}" ] && [ "${PANDOC_TOC}" = "true" ]; then
+    # Use --toc to include a table of contents
+    COMMAND="${COMMAND} --toc"
+fi
 if [ -n "${PANDOC_PDF_ENGINE}" ]; then
     # Use --pdf-engine to specify the PDF engine
     COMMAND="${COMMAND} --pdf-engine ${PANDOC_PDF_ENGINE}"
