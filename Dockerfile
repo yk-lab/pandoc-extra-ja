@@ -21,6 +21,7 @@ RUN set -e \
         collection-langjapanese \
         collection-fontsrecommended \
         collection-fontsextra \
+    && tlmgr update --all \
     && tlmgr backup --clean --all
 
 # Install additional packages
@@ -35,3 +36,5 @@ RUN set -e \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && fc-cache -f
+
+COPY action.sh /action.sh
