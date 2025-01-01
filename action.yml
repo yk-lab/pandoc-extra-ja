@@ -28,6 +28,14 @@ inputs:
     description: 'Whether to use the listings package'
     default: false
     type: boolean
+  highlight-style:
+    required: false
+    description: 'The highlight style to use'
+  toc:
+    required: false
+    description: 'Whether to include a table of contents'
+    default: false
+    type: boolean
   cjk-mainfont:
     required: false
     description: 'The main font for CJK characters (e.g. Noto Serif CJK JP)'
@@ -57,6 +65,8 @@ runs:
     PANDOC_PDF_ENGINE: ${{ inputs.pdf-engine }}
     PANDOC_TEMPLATE: ${{ inputs.template }}
     PANDOC_LISTINGS: ${{ inputs.listings }}
+    PANDOC_HIGHLIGHT_STYLE: ${{ inputs.highlight-style }}
+    PANDOC_TOC: ${{ inputs.toc }}
     PANDOC_CJK_MAINFONT: ${{ inputs.cjk-mainfont }}
     PANDOC_MAINFONT: ${{ inputs.mainfont }}
     PANDOC_SANSFONT: ${{ inputs.sansfont }}
