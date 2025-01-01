@@ -10,10 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run hadolint
-        uses: hadolint/hadolint-action@v3.1.0
-        with:
-          dockerfile: Dockerfile
+      - uses: ./.github/actions/docker-lint
 
   lint_markdown:
     runs-on: ubuntu-latest
@@ -24,7 +21,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           filter_mode: nofilter
-          fail_on_error: true
+          fail_level: error
 
   lint_shell:
     runs-on: ubuntu-latest
@@ -47,7 +44,7 @@ jobs:
         uses: reviewdog/action-yamllint@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          fail_on_error: true
+          fail_level: error
       - name: yamlfmt action
         uses: yk-lab/yamlfmt-action@v1.0.0-rc1
         with:
